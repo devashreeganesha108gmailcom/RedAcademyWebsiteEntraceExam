@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Quiz2</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+    </head>
+    <body>
+        Your Score is:
+        <div id="score"></div>
+        <div id="title"></div>
+        <div id="content"></div>
+        <script>
+            var jsondata, questionNumber = 0;
+            var score = 0;
+            //score = Object(score);
+            var questionNumber = 0;
+            var mygetrequest = new ajaxRequest();
+            mygetrequest.onreadystatechange=function(){
+                if (mygetrequest.readyState === 4){
+                    if (mygetrequest.status === 200 || window.location.href.indexOf("http") === -1)
+                        jsondata = eval("("+mygetrequest.responseText+")"); 
+                        document.getElementById("title").innerHTML = jsondata.quizzes[0].title; 
+                        document.getElementById("content").innerHTML += jsondata.quizzes[0].questions[questionNumber].question + '<br>';         
+                        document.getElementById("content").innerHTML 
+                            += '<button class="button" name="answer1" onclick="myVar=setInterval(myFunction, 2000,questionNumber);evaluateAnswer(0,questionNumber,score);" >' 
+                              + jsondata.quizzes[0].questions[questionNumber].answers[0].content + '</button>';
+                        document.getElementById("content").innerHTML 
+                            += '<button class="button" name="answer3" onclick="myVar=setInterval(myFunction, 2000,questionNumber);evaluateAnswer(2,questionNumber,score);" >' 
+                              + jsondata.quizzes[0].questions[questionNumber].answers[2].content + '</button>' + '<br>';
+
+                        document.getElementById("content").innerHTML 
+                            += '<button class="button" name="answer2" onclick="myVar=setInterval(myFunction, 2000,questionNumber);evaluateAnswer(1,questionNumber,score);" >' 
+                              + jsondata.quizzes[0].questions[questionNumber].answers[1].content + '</button>';
+                        document.getElementById("content").innerHTML 
+                            += '<button class="button" name="answer4" onclick="myVar=setInterval(myFunction, 2000,questionNumber);evaluateAnswer(3,questionNumber,score);" >' 
+                              + jsondata.quizzes[0].questions[questionNumber].answers[3].content + '</button>' + '<br>';   
+                    }
+                    else{
+                        alert("An error has occured while making the request");
+                    }
+                };
+            mygetrequest.open("GET", "QuizData.json", true);
+            mygetrequest.send(null);
+            
+            function myFunction(questionNumber) {
+                ++questionNumber;
+                //document.getElementById("score").innerHTML = score;
+                if(questionNumber > 2)
+                    setInterval(quizComplete, 2000);
+                if(questionNumber < jsondata.quizzes[0].questions.length){
+                    document.getElementById("content").innerHTML += jsondata.quizzes[0].questions[questionNumber].question + '<br>'; 
+                    document.getElementById("content").innerHTML 
+                        += '<button class="button" name="answer1" onclick="myVar=setTimeout(myFunction, 2000, ++questionNumber);evaluateAnswer(0,questionNumber,score);" >' 
+                          + jsondata.quizzes[0].questions[questionNumber].answers[0].content + '</button>';
+                    document.getElementById("content").innerHTML 
+                        += '<button class="button" name="answer3" onclick="myVar=setTimeout(myFunction, 2000, ++questionNumber);evaluateAnswer(2,questionNumber,score);">' 
+                          + jsondata.quizzes[0].questions[questionNumber].answers[2].content + '</button>' + '<br>';
+                    document.getElementById("content").innerHTML 
+                        += '<button class="button" name="answer1" onclick="myVar=setTimeout(myFunction, 2000, ++questionNumber);evaluateAnswer(1,questionNumber,score);">' 
+                          + jsondata.quizzes[0].questions[questionNumber].answers[1].content + '</button>';
+                    document.getElementById("content").innerHTML 
+                        += '<button class="button" name="answer3" onclick="myVar=setTimeout(myFunction, 2000, ++questionNumber);evaluateAnswer(3,questionNumber,score);">' 
+                          + jsondata.quizzes[0].questions[questionNumber].answers[3].content + '</button>' + '<br>';
+                    clearTimeout(myVar);
+                } 
+            }
+            function evaluateAnswer(answerNumber,questionNumber,score){
+                if (jsondata.quizzes[0].questions[questionNumber].answers[parseInt(answerNumber)].value === true){
+                    document.getElementById("content").innerHTML += '<div name="correctanswer">correct answer</div>';
+                    ++score;
+                    document.getElementById("score").innerHTML = score;
+                }
+                else{
+                    document.getElementById("content").innerHTML += '<div name="wronganswer">wrong answer</div>';
+                    document.getElementById("score").innerHTML = score;
+                }
+            }
+            function quizComplete(){
+                document.getElementById("title").innerHTML = "google";
+                window.location.href = "QuizTwoComplete.html?score=" + score;
+            }
+            function ajaxRequest(){
+                var activexmodes=["Msxml2.XMLHTTP", "Microsoft.XMLHTTP"]; 
+                if (window.ActiveXObject){ 
+                    for (var i = 0; i < activexmodes.length; i++){
+                        try{
+                            return new ActiveXObject(activexmodes[i]);
+                        }
+                        catch(e){
+                            
+                        }
+                    }
+                }
+                else if (window.XMLHttpRequest) 
+                    return new XMLHttpRequest();
+                else
+                    return false;
+            }
+        </script>
+    </body>
+</html>

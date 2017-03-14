@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Quiz 2 Complete</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+    </head>
+    <body>
+        <div>You successfully completed the Quiz</div>
+        <div id="score"></div>
+        <script>
+        var score = getUrlVars()["score"];
+        document.getElementById("score").innerHTML = score;
+        function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                vars[key] = value;
+                });
+                return vars;
+            }    
+        </script>
+    </body>
+</html>
